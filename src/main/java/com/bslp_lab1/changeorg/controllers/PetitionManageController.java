@@ -5,6 +5,8 @@ import com.bslp_lab1.changeorg.beans.*;
 import com.bslp_lab1.changeorg.service.PetitionRepositoryService;
 import com.bslp_lab1.changeorg.service.SubscribersRepositoryService;
 import com.bslp_lab1.changeorg.service.UserRepositoryService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/petition")
+@Api(value = "Petition api")
 public class PetitionManageController {
 
     @Autowired
@@ -39,6 +42,7 @@ public class PetitionManageController {
 
 
     @PutMapping("/add")
+    @ApiOperation(value = "add petition")
     public ResponseEntity<Message> addPetition(@RequestBody Petition petition, HttpServletRequest request){
         User owner = this.userRepositoryService.getUserFromRequest(request);
         if(owner != null){

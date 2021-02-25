@@ -12,10 +12,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.*;
+
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@WebFilter(urlPatterns = { "/petition/add","/petition/subscribe"})
 public class JwtFilter extends GenericFilterBean {
 
     @Autowired
@@ -24,6 +27,7 @@ public class JwtFilter extends GenericFilterBean {
     private ChangeOrgUserDetailsService changeOrgUserDetailsService;
 
     @Override
+
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         System.out.println("filter logs: do filter");
         String token = JWTutils.getTokenFromRequest((HttpServletRequest) servletRequest);
@@ -34,15 +38,7 @@ public class JwtFilter extends GenericFilterBean {
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(changeOrgUserDetails, null, null);
             SecurityContextHolder.getContext().setAuthentication(auth);
             System.out.println("filter logs: auth completed");
-        }else{
-            String uri = ((HttpServletRequest) servletRequest).getRequestURI();
-            System.out.println(uri);
-            if(!uri.equals("/users/auth") && !uri.equals("/users/register")){
-                ((HttpServletResponse)servletResponse).setStatus(401);
-                ((HttpServletResponse)servletResponse).getOutputStream().write("Invalid token".getBytes());
-                return;
-            }
-        }
+          }
         filterChain.doFilter(servletRequest, servletResponse);
 
     }
