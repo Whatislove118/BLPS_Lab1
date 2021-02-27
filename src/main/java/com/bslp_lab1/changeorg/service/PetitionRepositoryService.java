@@ -1,5 +1,6 @@
 package com.bslp_lab1.changeorg.service;
 
+import com.bslp_lab1.changeorg.DTO.PetitionDTO;
 import com.bslp_lab1.changeorg.beans.Petition;
 import com.bslp_lab1.changeorg.repository.PetitionRepository;
 import org.springframework.beans.factory.annotation.Autowired;

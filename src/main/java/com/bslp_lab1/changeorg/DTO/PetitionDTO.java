@@ -1,44 +1,17 @@
-package com.bslp_lab1.changeorg.beans;
+package com.bslp_lab1.changeorg.DTO;
 
-import com.sun.istack.NotNull;
-import io.swagger.models.auth.In;
-import org.hibernate.annotations.ColumnDefault;
+import java.io.Serializable;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "change_org_petition", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"topic"})
-})
-public class Petition {
-    @Id
-    @GeneratedValue
+public class PetitionDTO implements Serializable, MessageDTO {
     private Long ID;
-    @NotNull
     private String topic;
-
-    @NotNull
-    @ManyToOne(cascade=CascadeType.ALL)
-    @JoinColumn(name = "change_org_users_id")
-    @OrderColumn(name = "change_org_petition_owner")
-    private User owner;
-
-
-    @NotNull
+    private UserDTO owner;
     private String imageSrc;
-    @NotNull
     private String description;
-    @NotNull
-    @ColumnDefault("0")
     private Integer countSign;
-    @NotNull
     private Integer signGoal;
 
 
-
-    public void incrementCountSign(){
-        this.setCountSign(this.getCountSign() + 1);
-    }
     public Long getID() {
         return ID;
     }
@@ -55,11 +28,11 @@ public class Petition {
         this.topic = topic;
     }
 
-    public User getOwner() {
+    public UserDTO getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(UserDTO owner) {
         this.owner = owner;
     }
 
@@ -94,5 +67,4 @@ public class Petition {
     public void setSignGoal(Integer signGoal) {
         this.signGoal = signGoal;
     }
-
 }

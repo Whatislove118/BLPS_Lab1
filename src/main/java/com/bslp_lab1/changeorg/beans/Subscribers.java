@@ -1,12 +1,15 @@
 package com.bslp_lab1.changeorg.beans;
 
-import net.bytebuddy.implementation.bind.annotation.Default;
+
+
+import com.bslp_lab1.changeorg.DTO.PetitionDTO;
+import com.bslp_lab1.changeorg.DTO.SubscribersDTO;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "subscribers")
-@IdClass(SubscribersId.class)
+@IdClass(SubscribersIds.class)
 public class Subscribers {
 
     @Id
@@ -20,7 +23,7 @@ public class Subscribers {
     private Petition petition;
 
     @Column(name = "is_subscriber_anon")
-    private boolean anon;
+    private Boolean anon;
 
 
     public void settingSubscriberObject(Petition petition, User user,
@@ -47,11 +50,11 @@ public class Subscribers {
         this.petition = petition;
     }
 
-    public boolean getAnon() {
+    public Boolean getAnon() {
         return anon;
     }
 
-    public void setAnon(boolean anon) {
+    public void setAnon(Boolean anon) {
         this.anon = anon;
     }
 }

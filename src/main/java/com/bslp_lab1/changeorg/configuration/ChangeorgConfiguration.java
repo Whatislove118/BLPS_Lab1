@@ -1,6 +1,10 @@
 package com.bslp_lab1.changeorg.configuration;
 
 
+import com.bslp_lab1.changeorg.DTO.PetitionDTO;
+import com.bslp_lab1.changeorg.DTO.ResponseMessageDTO;
+import com.bslp_lab1.changeorg.DTO.SubscribersDTO;
+import com.bslp_lab1.changeorg.DTO.UserDTO;
 import com.bslp_lab1.changeorg.beans.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,15 +12,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 
 @Configuration
 @EnableWebMvc
-
 public class ChangeorgConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
@@ -48,15 +47,26 @@ public class ChangeorgConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     @Scope(scopeName = "prototype")
-    public Message getMessage(){
-        return new Message();
+    public ResponseMessageDTO getResponseMessageDTO(){
+        return new ResponseMessageDTO();
     }
 
-    @Bean(name = "UserWrapper")
+    @Bean(name = "UserDTO")
     @Scope(scopeName = "prototype")
-    public UserWrapper getUserWrapper(){
-        return new UserWrapper();
+    public UserDTO getUserDTO(){
+        return new UserDTO();
     }
+
+    @Bean(name = "PetitionDTO")
+    @Scope(scopeName = "prototype")
+    public PetitionDTO getPetitionDTO() {return new PetitionDTO();}
+
+    @Bean(name = "SubscribersDTO")
+    @Scope(scopeName = "prototype")
+    public SubscribersDTO getSubscribersDTO() {return new SubscribersDTO();}
+
+
+
 
 
 

@@ -1,6 +1,8 @@
 package com.bslp_lab1.changeorg.beans;
 
-import com.sun.istack.internal.NotNull;
+
+
+import com.sun.istack.NotNull;
 
 import javax.persistence.*;
 
@@ -11,7 +13,7 @@ import javax.persistence.*;
 public class User {
     @Id
     @GeneratedValue
-    private long ID;
+    private Long ID;
 
     @NotNull
     private String email;
@@ -24,11 +26,11 @@ public class User {
 
 
 
-    public long getID() {
+    public Long getID() {
         return ID;
     }
 
-    public void setID(long ID) {
+    public void setID(Long ID) {
         this.ID = ID;
     }
 

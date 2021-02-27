@@ -1,9 +1,13 @@
-package com.bslp_lab1.changeorg.beans;
+package com.bslp_lab1.changeorg.DTO;
 
-public class UserWrapper {
+import java.io.Serializable;
+
+public class UserDTO implements Serializable {
     private String surname;
     private String name;
-    private long Id;
+    private Long Id;
+    private String password;
+    private String email;
 
 
     public void settingWrapperUser(String surname,
@@ -18,6 +22,24 @@ public class UserWrapper {
         this.surname = "Анонимус";
         this.name = "Анон";
     }
+
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getSurname() {
         return surname;
     }
@@ -34,11 +56,11 @@ public class UserWrapper {
         this.name = name;
     }
 
-    public long getId() {
+    public Long getId() {
         return Id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         Id = id;
     }
 }

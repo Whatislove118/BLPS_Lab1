@@ -1,14 +1,18 @@
 package com.bslp_lab1.changeorg.controllers;
 
 
+import com.bslp_lab1.changeorg.DTO.PetitionDTO;
+import com.bslp_lab1.changeorg.DTO.ResponseMessageDTO;
+import com.bslp_lab1.changeorg.DTO.SubscribersDTO;
+import com.bslp_lab1.changeorg.DTO.UserDTO;
 import com.bslp_lab1.changeorg.beans.*;
+import com.bslp_lab1.changeorg.service.DTOConverter;
 import com.bslp_lab1.changeorg.service.PetitionRepositoryService;
 import com.bslp_lab1.changeorg.service.SubscribersRepositoryService;
 import com.bslp_lab1.changeorg.service.UserRepositoryService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +23,14 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/petition")
 @Api(value = "Petition api")
+/* TODO
+    закончить внедрение DTO
+*   переделать логику контроллеров
+    внедрить модуль валидации
+*/
 public class PetitionManageController {
 
-    @Autowired
-    private ApplicationContext applicationContext;
+
     @Autowired
     private PetitionRepositoryService petitionRepositoryService;
     @Autowired
@@ -30,33 +38,37 @@ public class PetitionManageController {
     @Autowired
     private SubscribersRepositoryService subscribersRepositoryService;
     @Autowired
+    private DTOConverter dtoConverter;
+
+    @Autowired
     private Subscribers subscribers;
     @Autowired
-    private Message message;
+    private ResponseMessageDTO message;
+    @Autowired
+    private Petition petition;
 
+    @Autowired
+    private PetitionDTO petitionDTO;
 
-
-    private UserWrapper createUserWrapper(){
-        return (UserWrapper) applicationContext.getBean("UserWrapper");
-    }
 
 
     @PutMapping("/add")
     @ApiOperation(value = "add petition")
-    public ResponseEntity<Message> addPetition(@RequestBody Petition petition, HttpServletRequest request){
+    public ResponseEntity<ResponseMessageDTO> addPetition(@RequestBody PetitionDTO petitionDTO, HttpServletRequest request){
+        petition = dtoConverter.convertPetitionFromDTO(petitionDTO);
         User owner = this.userRepositoryService.getUserFromRequest(request);
         if(owner != null){
             petition.setOwner(owner);
         }else{
             this.message.setAnswer("Petition without owner. Internal server error");
-            return new ResponseEntity<Message>(this.message, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<ResponseMessageDTO>(this.message, HttpStatus.BAD_REQUEST);
         }
         if(this.petitionRepositoryService.save(petition)){
             this.message.setAnswer("Petition was added");
-            return new ResponseEntity<Message>(this.message, HttpStatus.CREATED);
+            return new ResponseEntity<ResponseMessageDTO>(this.message, HttpStatus.CREATED);
         }
         this.message.setAnswer("Can't save petition. Petition with same topic already exists");
-        return new ResponseEntity<Message>(this.message, HttpStatus.CONFLICT);
+        return new ResponseEntity<ResponseMessageDTO>(this.message, HttpStatus.CONFLICT);
     }
 
     @GetMapping("/all")
@@ -65,18 +77,18 @@ public class PetitionManageController {
     }
 
     @PutMapping("/{id}/subscribe")
-    public ResponseEntity<Message> getSubscribe(@RequestBody SubscribersId petitionInfo,
-                                       @PathVariable("id") long id, HttpServletRequest request){
+    public ResponseEntity<ResponseMessageDTO> getSubscribe(@RequestBody SubscribersDTO petitionInfo,
+                                                           @PathVariable("id") long id, HttpServletRequest request){
 
         User subscriber = this.userRepositoryService.getUserFromRequest(request);
         if(subscriber == null){
             this.message.setAnswer("User not found. Your token invalid. Access denied");
-            return new ResponseEntity<Message>(message, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<ResponseMessageDTO>(message, HttpStatus.FORBIDDEN);
         }
         Petition petition = this.petitionRepositoryService.findById(id);
         if(petition == null){
             this.message.setAnswer("Petition not found. ");
-            return new ResponseEntity<Message>(message, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<ResponseMessageDTO>(message, HttpStatus.NOT_FOUND);
         }
         petition.incrementCountSign();
         System.out.println(petitionInfo.getAnon());
@@ -84,34 +96,35 @@ public class PetitionManageController {
         subscribers.settingSubscriberObject(petition, subscriber, petitionInfo.getAnon());
         if(this.subscribersRepositoryService.save(subscribers)){
             this.message.setAnswer("Subscribed");
-            return new ResponseEntity<Message>(message, HttpStatus.CREATED);
+            return new ResponseEntity<ResponseMessageDTO>(message, HttpStatus.CREATED);
         }
         this.message.setAnswer("You are already subscribed");
-        return new ResponseEntity<Message>(message, HttpStatus.CONFLICT);
+        return new ResponseEntity<ResponseMessageDTO>(message, HttpStatus.CONFLICT);
 
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Petition> getPetitionById(@PathVariable("id") long id){
+    public ResponseEntity<PetitionDTO> getPetitionById(@PathVariable("id") Long id){
         Petition petition = this.petitionRepositoryService.findById(id);
+        petitionDTO = dtoConverter.convertPetitionToDTO(petition);
         if(petition != null){
-            return new ResponseEntity<Petition>(petition, HttpStatus.OK);
+            return new ResponseEntity<PetitionDTO>(petitionDTO, HttpStatus.OK);
         }else{
-            return new ResponseEntity<Petition>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<PetitionDTO>(HttpStatus.NOT_FOUND);
         }
 
     }
 
     @GetMapping("/{id}/users")
-    public ResponseEntity<ArrayList<UserWrapper>> getAllSubscribedUser(@PathVariable("id") long id){
+    public ResponseEntity<ArrayList<UserDTO>> getAllSubscribedUser(@PathVariable("id") long id){
         ArrayList<Subscribers> subscribers = this.subscribersRepositoryService.findAllByPetitionId(id);
         if(subscribers == null){
-            return new ResponseEntity<ArrayList<UserWrapper>>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<ArrayList<UserDTO>>(HttpStatus.NOT_FOUND);
         }
-        ArrayList<UserWrapper> users = new ArrayList<>();
+        ArrayList<UserDTO> users = new ArrayList<>();
         for(Subscribers sub : subscribers){
             if(sub.getAnon()){
-                UserWrapper anonUserWrapper = createUserWrapper();
+                UserDTO anonUserWrapper = dtoConverter.convertAnonUserToDTO();
                 anonUserWrapper.settingWrapperUserAnon();
                 users.add(anonUserWrapper);
 
@@ -120,12 +133,12 @@ public class PetitionManageController {
                 if (user == null){
                     continue;
                 }else{
-                    UserWrapper userWrapper = createUserWrapper();
+                    UserDTO userWrapper = dtoConverter.convertUserToDTO(user);
                     userWrapper.settingWrapperUser(sub.getUser().getSurname(), sub.getUser().getName(), sub.getUser().getID());
                     users.add(userWrapper);
                 }
             }
         }
-        return new ResponseEntity<ArrayList<UserWrapper>>(users, HttpStatus.OK);
+        return new ResponseEntity<ArrayList<UserDTO>>(users, HttpStatus.OK);
     }
 }

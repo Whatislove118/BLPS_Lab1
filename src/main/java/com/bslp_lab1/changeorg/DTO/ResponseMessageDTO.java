@@ -1,6 +1,8 @@
-package com.bslp_lab1.changeorg.beans;
+package com.bslp_lab1.changeorg.DTO;
 
-public class Message {
+import java.io.Serializable;
+
+public class ResponseMessageDTO implements Serializable {
     private String answer;
 
     public String getAnswer() {

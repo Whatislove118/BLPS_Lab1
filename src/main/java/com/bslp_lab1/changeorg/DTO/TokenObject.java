@@ -1,4 +1,4 @@
-package com.bslp_lab1.changeorg.utils;
+package com.bslp_lab1.changeorg.DTO;
 
 public class TokenObject {
     private String token;

@@ -1,11 +1,13 @@
 package com.bslp_lab1.changeorg.controllers;
 
-import com.bslp_lab1.changeorg.beans.Message;
+import com.bslp_lab1.changeorg.DTO.ResponseMessageDTO;
+import com.bslp_lab1.changeorg.DTO.UserDTO;
 import com.bslp_lab1.changeorg.beans.User;
 
+import com.bslp_lab1.changeorg.service.DTOConverter;
 import com.bslp_lab1.changeorg.service.UserRepositoryService;
 import com.bslp_lab1.changeorg.utils.JWTutils;
-import com.bslp_lab1.changeorg.utils.TokenObject;
+import com.bslp_lab1.changeorg.DTO.TokenObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,23 +21,29 @@ public class AuthorizationController {
     @Autowired
     private JWTutils jwTutils;
     @Autowired
+    private DTOConverter dtoConverter;
+    @Autowired
     private  UserRepositoryService userRepositoryService;
     @Autowired
-    private Message message;
+    private ResponseMessageDTO message;
+    @Autowired
+    private User user;
 
 
     @PutMapping("/register")
-    public ResponseEntity<Message> register(@RequestBody User user) {
+    public ResponseEntity<ResponseMessageDTO> register(@RequestBody UserDTO userDTO) {
+        user = dtoConverter.convertUserFromDTO(userDTO);
         if(this.userRepositoryService.save(user)){
             this.message.setAnswer("You are successful registered");
-            return new ResponseEntity<Message>(this.message, HttpStatus.CREATED);
+            return new ResponseEntity<ResponseMessageDTO>(this.message, HttpStatus.CREATED);
         }
         this.message.setAnswer("User with this email is already exists");
-        return new ResponseEntity<Message>(this.message, HttpStatus.CONFLICT);
+        return new ResponseEntity<ResponseMessageDTO>(this.message, HttpStatus.CONFLICT);
     }
 
     @PostMapping("/auth")
-    public ResponseEntity<TokenObject> auth(@RequestBody User user){
+    public ResponseEntity<TokenObject> auth(@RequestBody UserDTO userDTO){
+        user = dtoConverter.convertUserFromDTO(userDTO);
         User checkUser = userRepositoryService.findByEmailAndPassword(user.getEmail(), user.getPassword());
         if(checkUser != null){
             TokenObject token = new TokenObject(jwTutils.generateToken(checkUser.getEmail()));
