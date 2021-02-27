@@ -9,6 +9,7 @@ import com.bslp_lab1.changeorg.service.UserRepositoryService;
 import com.bslp_lab1.changeorg.utils.JWTutils;
 import com.bslp_lab1.changeorg.DTO.TokenObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,22 +34,26 @@ public class AuthorizationController {
     @PutMapping("/register")
     public ResponseEntity<ResponseMessageDTO> register(@RequestBody UserDTO userDTO) {
         user = dtoConverter.convertUserFromDTO(userDTO);
-        if(this.userRepositoryService.save(user)){
-            this.message.setAnswer("You are successful registered");
-            return new ResponseEntity<ResponseMessageDTO>(this.message, HttpStatus.CREATED);
+        try {
+            this.userRepositoryService.save(user);
+        }catch (DataIntegrityViolationException e){
+            this.message.setAnswer("User with this email is already exists");
+            return new ResponseEntity<ResponseMessageDTO>(this.message, HttpStatus.CONFLICT);
         }
-        this.message.setAnswer("User with this email is already exists");
-        return new ResponseEntity<ResponseMessageDTO>(this.message, HttpStatus.CONFLICT);
+        this.message.setAnswer("You successful registered");
+        return new ResponseEntity<ResponseMessageDTO>(this.message, HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/auth")
-    public ResponseEntity<TokenObject> auth(@RequestBody UserDTO userDTO){
+    public ResponseEntity auth(@RequestBody UserDTO userDTO){
         user = dtoConverter.convertUserFromDTO(userDTO);
-        User checkUser = userRepositoryService.findByEmailAndPassword(user.getEmail(), user.getPassword());
-        if(checkUser != null){
-            TokenObject token = new TokenObject(jwTutils.generateToken(checkUser.getEmail()));
-            return new ResponseEntity<TokenObject>(token, HttpStatus.ACCEPTED);
+        try {
+            user = userRepositoryService.findByEmailAndPassword(user.getEmail(), user.getPassword());
+            TokenObject token = new TokenObject(jwTutils.generateToken(user.getEmail()));
+            return new ResponseEntity<>(token, HttpStatus.ACCEPTED);
+        }catch (NullPointerException e){
+            message.setAnswer("User not found! Please, repeat authorization");
+            return new ResponseEntity<>(message, HttpStatus.NOT_ACCEPTABLE);
         }
-        return new ResponseEntity<TokenObject>(HttpStatus.NOT_ACCEPTABLE);
     }
 }

@@ -74,6 +74,7 @@ public class DTOConverter {
     private Subscribers subscribers;
 
 
+
     public User convertUserFromDTO(UserDTO userDTO){
         user.setSurname(userDTO.getSurname());
         user.setName(userDTO.getName());
@@ -85,9 +86,9 @@ public class DTOConverter {
         return user;
     }
 
-    public Petition convertPetitionFromDTO(PetitionDTO petitionDTO){
-        petition.setOwner(convertUserFromDTO(petitionDTO.getOwner()));
-        petition.setCountSign(petitionDTO.getCountSign());
+    public Petition convertPetitionFromDTO(PetitionDTO petitionDTO, User user){
+        petition.setOwner(user);
+        petition.setCountSign(0);
         petition.setDescription(petitionDTO.getDescription());
         petition.setImageSrc(petitionDTO.getImageSrc());
         petition.setTopic(petitionDTO.getTopic());
@@ -98,12 +99,12 @@ public class DTOConverter {
         return petition;
     }
 
-    public Subscribers convertSubscribersFromDTO(SubscribersDTO subscribersDTO){
-        subscribers.setPetition(this.convertPetitionFromDTO(subscribersDTO.getPetition()));
-        subscribers.setUser(this.convertUserFromDTO(subscribersDTO.getUser()));
-        subscribers.setAnon(subscribersDTO.getAnon());
-        return subscribers;
-    }
+//    public Subscribers convertSubscribersFromDTO(SubscribersDTO subscribersDTO){
+//        subscribers.setPetition(this.convertPetitionFromDTO(subscribersDTO.getPetition()));
+//        subscribers.setUser(this.convertUserFromDTO(subscribersDTO.getUser()));
+//        subscribers.setAnon(subscribersDTO.getAnon());
+//        return subscribers;
+//    }
 
 
 }

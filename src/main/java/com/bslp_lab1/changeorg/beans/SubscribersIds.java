@@ -4,15 +4,15 @@ import java.io.Serializable;
 
 public class SubscribersIds implements Serializable {
 
-    private User user;
+    private Long user;
     private Boolean anon;
-    private Petition petition;
+    private Long petition;
 
-    public User getUser() {
+    public Long getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(Long user) {
         this.user = user;
     }
 
@@ -24,11 +24,11 @@ public class SubscribersIds implements Serializable {
         this.anon = anon;
     }
 
-    public Petition getPetition() {
+    public Long getPetition() {
         return petition;
     }
 
-    public void setPetition(Petition petition) {
+    public void setPetition(Long petition) {
         this.petition = petition;
     }
 }

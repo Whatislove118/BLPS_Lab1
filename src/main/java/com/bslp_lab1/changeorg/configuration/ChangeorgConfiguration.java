@@ -28,9 +28,7 @@ public class ChangeorgConfiguration extends WebMvcConfigurerAdapter {
     }
     @Bean
     @Scope(scopeName = "prototype")
-    public User getUser(){
-        return new User();
-    }
+    public User getUser(){ return new User(); }
 
     @Bean
     @Scope(scopeName = "prototype")

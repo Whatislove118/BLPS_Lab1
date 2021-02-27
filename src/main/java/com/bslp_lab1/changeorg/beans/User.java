@@ -7,9 +7,9 @@ import com.sun.istack.NotNull;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "change_org_users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"email"})
-})
+@Table(name = "change_org_users", uniqueConstraints =
+        @UniqueConstraint(columnNames = "email")
+)
 public class User {
     @Id
     @GeneratedValue

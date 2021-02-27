@@ -5,6 +5,7 @@ import com.bslp_lab1.changeorg.repository.UserRepository;
 import com.bslp_lab1.changeorg.utils.JWTutils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,43 +24,25 @@ public class UserRepositoryService {
         return userRepository;
     }
 
-    public User getUserFromRequest(HttpServletRequest request){
+    public User getUserFromRequest(HttpServletRequest request) throws NullPointerException{
         String token = jwTutils.getTokenFromRequest(request);
         String email = jwTutils.getEmailFromToken(token);
         User user =  this.findByEmail(email);
-        if(user != null) {
-            return user;
-        }
-        return null;
+        System.out.println("getting user from request" + user.getEmail());
+        return user;
     }
 
-    public boolean save(User user){
-        try{
-            this.userRepository.save(user);
-            return true;
-        }catch (Exception e){
-            System.out.println("User " + user.getEmail() + " already exists");
-            return false;
-        }
+    public void save(User user) throws DataIntegrityViolationException {
+        this.userRepository.save(user);
     }
 
-    public User findById(Long id){
-        try{
-            return this.userRepository.findByID(id);
-        }catch (Exception e){
-            System.out.println("User not found");
-            return null;
-        }
+    public User findById(Long id) throws NullPointerException{
+        return this.userRepository.findByID(id);
     }
 
 
     public User findByEmailAndPassword(String email, String password){
-        try{
-           return this.userRepository.findByEmailAndPassword(email, password);
-        }catch (Exception e){
-            System.out.println("User " + email + " not found");
-            return null;
-        }
+        return this.userRepository.findByEmailAndPassword(email, password);
     }
 
     public User findByEmail(String email){

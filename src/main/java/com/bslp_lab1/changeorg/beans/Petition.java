@@ -7,9 +7,9 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "change_org_petition", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"topic"})
-})
+@Table(name = "change_org_petition", uniqueConstraints =
+        @UniqueConstraint(columnNames = "topic")
+)
 public class Petition {
     @Id
     @GeneratedValue

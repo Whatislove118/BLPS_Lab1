@@ -2,7 +2,7 @@ package com.bslp_lab1.changeorg.DTO;
 
 import java.io.Serializable;
 
-public class PetitionDTO implements Serializable, MessageDTO {
+public class PetitionDTO implements Serializable {
     private Long ID;
     private String topic;
     private UserDTO owner;

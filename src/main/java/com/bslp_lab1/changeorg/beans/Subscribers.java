@@ -4,6 +4,7 @@ package com.bslp_lab1.changeorg.beans;
 
 import com.bslp_lab1.changeorg.DTO.PetitionDTO;
 import com.bslp_lab1.changeorg.DTO.SubscribersDTO;
+import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
 

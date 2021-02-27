@@ -4,6 +4,7 @@ import com.bslp_lab1.changeorg.beans.Subscribers;
 import com.bslp_lab1.changeorg.repository.SubscribersRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,23 +24,12 @@ public class SubscribersRepositoryService {
         this.subscribersRepository = subscribersRepository;
     }
 
-    public boolean save(Subscribers subscriber){
-        try{
-            this.subscribersRepository.save(subscriber);
-            return true;
-        }catch (Exception e){
-            System.out.println("Subscriber already exists!");
-            return false;
-        }
+    public void save(Subscribers subscriber) throws DataIntegrityViolationException {
+        this.subscribersRepository.save(subscriber);
     }
 
-    public ArrayList<Subscribers> findAllByPetitionId(Long id){
-        try{
+    public ArrayList<Subscribers> findAllByPetitionId(Long id) throws NullPointerException{
             return subscribersRepository.findAllByPetitionID(id);
-        }catch (Exception e){
-            System.out.println("Subscribers not found");
-            return null;
         }
 
-    }
 }
