@@ -6,10 +6,13 @@ import com.bslp_lab1.changeorg.DTO.ResponseMessageDTO;
 import com.bslp_lab1.changeorg.DTO.SubscribersDTO;
 import com.bslp_lab1.changeorg.DTO.UserDTO;
 import com.bslp_lab1.changeorg.beans.*;
+import com.bslp_lab1.changeorg.exceptions.PetitionSignGoalValidationException;
+import com.bslp_lab1.changeorg.exceptions.PetitionTopicValidationException;
 import com.bslp_lab1.changeorg.service.DTOConverter;
 import com.bslp_lab1.changeorg.service.PetitionRepositoryService;
 import com.bslp_lab1.changeorg.service.SubscribersRepositoryService;
 import com.bslp_lab1.changeorg.service.UserRepositoryService;
+import com.bslp_lab1.changeorg.validation.PetitionValidationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +28,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/petition")
 @Api(value = "Petition api")
-/* TODO
-    закончить внедрение DTO
-*   переделать логику контроллеров
-    внедрить модуль валидации
+/* TODO logger
 */
 public class PetitionManageController {
 
@@ -54,14 +54,24 @@ public class PetitionManageController {
     private PetitionDTO petitionDTO;
     @Autowired
     private User user;
-//    @Autowired
-//    private UserDTO userDTO;
+    @Autowired
+    private PetitionValidationService petitionValidationService;
 
 
 
     @PutMapping("/add")
     @ApiOperation(value = "add petition")
     public ResponseEntity<ResponseMessageDTO> addPetition(@RequestBody PetitionDTO petitionDTO, HttpServletRequest request){
+        try{
+            petitionValidationService.validatePetitionDTO(petitionDTO);
+        }catch (PetitionTopicValidationException e){
+            message.setAnswer("Topic invalid. Please, try again");
+            return new ResponseEntity<ResponseMessageDTO>(this.message, HttpStatus.UNPROCESSABLE_ENTITY);
+        }catch (PetitionSignGoalValidationException e){
+            message.setAnswer("Sign goal invalid. Please, try again");
+            return new ResponseEntity<ResponseMessageDTO>(this.message, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+
         try {
             User owner = this.userRepositoryService.getUserFromRequest(request);
             petition = dtoConverter.convertPetitionFromDTO(petitionDTO, owner);
@@ -89,6 +99,7 @@ public class PetitionManageController {
 
     @PutMapping("/{id}/subscribe")
     public ResponseEntity getSubscribe(@RequestBody SubscribersDTO petitionInfo, @PathVariable("id") long id, HttpServletRequest request){
+
         try{
             User subscriber = this.userRepositoryService.getUserFromRequest(request);
             System.out.println(subscriber.getName());

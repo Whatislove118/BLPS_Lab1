@@ -15,6 +15,7 @@ public class Petition {
     @GeneratedValue
     private Long ID;
     @NotNull
+    @Column(unique = true)
     private String topic;
 
     @NotNull
