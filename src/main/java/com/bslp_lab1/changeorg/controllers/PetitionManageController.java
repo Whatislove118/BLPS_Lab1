@@ -28,8 +28,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/petition")
 @Api(value = "Petition api")
-/* TODO logger
-*/
+
 public class PetitionManageController {
 
 

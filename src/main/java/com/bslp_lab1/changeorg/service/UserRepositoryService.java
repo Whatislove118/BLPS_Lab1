@@ -1,10 +1,14 @@
 package com.bslp_lab1.changeorg.service;
 
 import com.bslp_lab1.changeorg.beans.User;
+
 import com.bslp_lab1.changeorg.repository.UserRepository;
 import com.bslp_lab1.changeorg.utils.JWTutils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +22,7 @@ public class UserRepositoryService {
     private UserRepository userRepository;
     @Autowired
     private JWTutils jwTutils;
+    Logger logger = LogManager.getLogger(UserRepositoryService.class);
 
 
     public UserRepository getUserRepService() {
@@ -28,7 +33,7 @@ public class UserRepositoryService {
         String token = jwTutils.getTokenFromRequest(request);
         String email = jwTutils.getEmailFromToken(token);
         User user =  this.findByEmail(email);
-        System.out.println("getting user from request" + user.getEmail());
+        logger.log(Level.INFO, "getting user from request" + user.getEmail());
         return user;
     }
 
@@ -49,7 +54,7 @@ public class UserRepositoryService {
         try{
             return this.userRepository.findByEmail(email);
         }catch (Exception e){
-            System.out.println("User " + email + " not in database");
+            logger.log(Level.INFO,"User " + email + " not in database");
             return null;
         }
     }

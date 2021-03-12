@@ -99,12 +99,7 @@ public class DTOConverter {
         return petition;
     }
 
-//    public Subscribers convertSubscribersFromDTO(SubscribersDTO subscribersDTO){
-//        subscribers.setPetition(this.convertPetitionFromDTO(subscribersDTO.getPetition()));
-//        subscribers.setUser(this.convertUserFromDTO(subscribersDTO.getUser()));
-//        subscribers.setAnon(subscribersDTO.getAnon());
-//        return subscribers;
-//    }
+
 
 
 }
