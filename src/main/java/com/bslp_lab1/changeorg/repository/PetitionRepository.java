@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PetitionRepository extends CrudRepository<Petition, Long> {
-    @Override
-    Optional<Petition> findById(Long aLong);
+    Petition findByID(Long id);
+
     @Override
     List<Petition> findAll();
 

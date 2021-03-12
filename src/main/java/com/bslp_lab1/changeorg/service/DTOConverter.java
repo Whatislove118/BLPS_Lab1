@@ -15,13 +15,12 @@ import java.util.ArrayList;
 public class DTOConverter {
 
     /*  This code about Convert TO DTO  */
-    @Autowired
-    private PetitionDTO petitionDTO;
-    @Autowired
-    private UserDTO userDTO;
+
+
 
 
     public PetitionDTO convertPetitionToDTO(Petition petition){
+        PetitionDTO petitionDTO = new PetitionDTO();
         petitionDTO.setID(petition.getID());
         petitionDTO.setTopic(petition.getTopic());
         petitionDTO.setCountSign(petition.getCountSign());
@@ -33,6 +32,7 @@ public class DTOConverter {
     }
 
     public UserDTO convertUserToDTO(User user){
+        UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getID());
         userDTO.setName(user.getName());
         userDTO.setSurname(user.getSurname());
@@ -40,6 +40,7 @@ public class DTOConverter {
     }
 
     public UserDTO convertAnonUserToDTO(){
+        UserDTO userDTO = new UserDTO();
         userDTO.setId(null);
         userDTO.setName("Анон");
         userDTO.setSurname("Анончик");
@@ -47,6 +48,7 @@ public class DTOConverter {
     }
 
     public ArrayList<UserDTO> convertSubscribersToUserDTO(ArrayList<Subscribers> subscribers, User user) {
+        UserDTO userDTO = new UserDTO();
         ArrayList<UserDTO> userDTOArrayList = new ArrayList<>();
         for (Subscribers sub : subscribers) {
             if (sub.getAnon()) {
@@ -86,7 +88,9 @@ public class DTOConverter {
         return user;
     }
 
+
     public Petition convertPetitionFromDTO(PetitionDTO petitionDTO, User user){
+        UserDTO userDTO = new UserDTO();
         petition.setOwner(user);
         petition.setCountSign(0);
         petition.setDescription(petitionDTO.getDescription());

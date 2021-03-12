@@ -1,19 +1,18 @@
 package com.bslp_lab1.changeorg.validation;
 
 import com.bslp_lab1.changeorg.DTO.PetitionDTO;
-import com.bslp_lab1.changeorg.exceptions.PetitionSignGoalValidationException;
-import com.bslp_lab1.changeorg.exceptions.PetitionTopicValidationException;
+import com.bslp_lab1.changeorg.exceptions.PetitionValidationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PetitionValidationService {
 
-    public void validatePetitionDTO(PetitionDTO petitionDTO) throws PetitionSignGoalValidationException, PetitionTopicValidationException {
-
+    public void validatePetitionDTO(PetitionDTO petitionDTO) throws PetitionValidationException {
         if(!validateTopicPetitionDTO(petitionDTO.getTopic())){
-            throw new PetitionTopicValidationException();
+            throw new PetitionValidationException("Invalid topic", HttpStatus.BAD_REQUEST);
         }else if(!validateSignGoalPetitionDTO(petitionDTO.getSignGoal())){
-            throw new PetitionSignGoalValidationException();
+            throw new PetitionValidationException("Sign goal must be a positive int", HttpStatus.BAD_REQUEST);
         }
 
     }

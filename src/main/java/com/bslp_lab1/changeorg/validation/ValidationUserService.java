@@ -2,28 +2,32 @@ package com.bslp_lab1.changeorg.validation;
 
 import com.bslp_lab1.changeorg.DTO.UserDTO;
 
-import com.bslp_lab1.changeorg.exceptions.UserEmailValidationException;
-import com.bslp_lab1.changeorg.exceptions.UserNameValidationException;
-import com.bslp_lab1.changeorg.exceptions.UserPasswordValidationException;
-import com.bslp_lab1.changeorg.exceptions.UserSurnameValidationException;
+import com.bslp_lab1.changeorg.exceptions.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ValidationUserService {
 
-    public void validateUserDTO(UserDTO userDTO) throws UserEmailValidationException, UserSurnameValidationException,
-            UserNameValidationException, UserPasswordValidationException {
-
+    public void validateUserDTO(UserDTO userDTO) throws UserValidationException {
         if(!validatePasswordUserDTO(userDTO.getPassword())){
-            throw new UserPasswordValidationException();
+            throw new UserValidationException("Invalid password. Please, try again", HttpStatus.UNAUTHORIZED);
         }else if(!validateEmailUserDTO(userDTO.getEmail())){
-            throw new UserEmailValidationException();
+            throw new UserValidationException("Invalid email. Please, try again", HttpStatus.BAD_REQUEST);
         }else if(!validateSurnameUserDTO(userDTO.getSurname())){
-            throw new UserSurnameValidationException();
+            throw new UserValidationException("Invalid surname. Please, try again", HttpStatus.BAD_REQUEST);
         }else if(!validateNameUserDTO(userDTO.getName())){
-            throw new UserNameValidationException();
+            throw new UserValidationException("Invalid name. Please, try again", HttpStatus.BAD_REQUEST);
         }
 
+    }
+
+    public void validateUserDTO_FOR_AUTH(UserDTO userDTO) throws UserValidationException{
+        if(!validatePasswordUserDTO(userDTO.getPassword())){
+            throw new UserValidationException("Invalid password. Please, try again", HttpStatus.UNAUTHORIZED);
+        }else if(!validateEmailUserDTO(userDTO.getEmail())){
+            throw new UserValidationException("Invalid email. Please, try again", HttpStatus.BAD_REQUEST);
+        }
     }
 
     private boolean validatePasswordUserDTO(String password){
