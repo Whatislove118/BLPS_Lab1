@@ -36,6 +36,7 @@ public class PetitionManageController {
     private UserRepositoryService userRepositoryService;
     @Autowired
     private SubscribersRepositoryService subscribersRepositoryService;
+
     private ResponseMessageDTO message;
 
     @Autowired

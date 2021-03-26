@@ -45,7 +45,7 @@ public class AuthorizationController {
     }
 
     @PostMapping("/auth")
-    public ResponseEntity auth(@RequestBody UserDTO userDTO){
+    public ResponseEntity<ResponseMessageDTO> auth(@RequestBody UserDTO userDTO){
         this.message = new ResponseMessageDTO();
         try{
             validationUserService.validateUserDTO_FOR_AUTH(userDTO);
