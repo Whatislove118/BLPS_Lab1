@@ -37,12 +37,10 @@ public class PetitionManageController {
     @Autowired
     private SubscribersRepositoryService subscribersRepositoryService;
 
-    private ResponseMessageDTO message;
+
 
     @Autowired
     private Petition petition;
-
-
 
     @Autowired
     private PetitionValidationService petitionValidationService;
@@ -52,12 +50,12 @@ public class PetitionManageController {
     @PutMapping("/add")
     @ApiOperation(value = "add petition")
     public ResponseEntity<ResponseMessageDTO> addPetition(@RequestBody PetitionDTO petitionDTO, HttpServletRequest request){
-        message = new ResponseMessageDTO();
+        ResponseMessageDTO message = new ResponseMessageDTO();
         try{
             petitionValidationService.validatePetitionDTO(petitionDTO);
         }catch (PetitionValidationException e){
             message.setAnswer(e.getErrMessage());
-            return new ResponseEntity<>(this.message, e.getErrStatus());
+            return new ResponseEntity<>(message, e.getErrStatus());
         }
         return this.petitionRepositoryService.saveFromDTO(petitionDTO, request);
     }
@@ -71,26 +69,26 @@ public class PetitionManageController {
 
     @PutMapping("/{id}/subscribe")
     public ResponseEntity getSubscribe(@RequestBody SubscribersDTO petitionInfo, @PathVariable("id") long id, HttpServletRequest request){
-        message = new ResponseMessageDTO();
+        ResponseMessageDTO message = new ResponseMessageDTO();
         try{
             User subscriber = this.userRepositoryService.getUserFromRequest(request);
             try{
                 petition = this.petitionRepositoryService.findById(id);
             }catch (PetitionNotFoundException e){
-                this.message.setAnswer(e.getErrMessage());
+                message.setAnswer(e.getErrMessage());
                 return new ResponseEntity<>(message, e.getErrStatus());
             }
             this.petitionRepositoryService.incrementCountSign(petition);
             return this.subscribersRepositoryService.subscribe(petition, subscriber, petitionInfo.getAnon());
         }catch (UserNotFoundException e){
-            this.message.setAnswer(e.getErrMessage());
+            message.setAnswer(e.getErrMessage());
             return new ResponseEntity<>(message, e.getErrStatus());
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity getPetitionById(@PathVariable("id") Long id){
-        message = new ResponseMessageDTO();
+        ResponseMessageDTO message = new ResponseMessageDTO();
         try {
             PetitionDTO petitionDTO = this.petitionRepositoryService.findByIdToResponse(id);
             return new ResponseEntity<>(petitionDTO, HttpStatus.OK);
@@ -102,14 +100,13 @@ public class PetitionManageController {
 
     @GetMapping("/{id}/users")
     public ResponseEntity getAllSubscribedUser(@PathVariable("id") long id){
-        message = new ResponseMessageDTO();
+        ResponseMessageDTO message = new ResponseMessageDTO();
         try {
             return this.subscribersRepositoryService.getAllSubscribedUsers(id);
         }catch (UserNotFoundException e){
             message.setAnswer(e.getErrMessage());
             return new ResponseEntity<>(message, e.getErrStatus());
         }catch (PetitionNotFoundException e){
-            ResponseMessageDTO message = new ResponseMessageDTO();
             message.setAnswer(e.getErrMessage());
             return new ResponseEntity<>(message, e.getErrStatus());
         }
