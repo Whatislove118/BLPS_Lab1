@@ -56,11 +56,8 @@ public class PetitionRepositoryService{
         ArrayList<PetitionDTO> petitionDTOS = new ArrayList<>();
         ArrayList<Petition> petitions = new ArrayList<>(this.findAll());
         for (Petition petition : petitions){
-            System.out.println(petition.getID());
             petitionDTOS.add(dtoConverter.convertPetitionToDTO(petition));
         }
-        System.out.println(petitionDTOS.get(0).getID());
-        System.out.println(petitionDTOS.get(1).getID());
         return petitionDTOS;
     }
 

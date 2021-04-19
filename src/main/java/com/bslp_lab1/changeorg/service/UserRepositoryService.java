@@ -3,9 +3,11 @@ package com.bslp_lab1.changeorg.service;
 import com.bslp_lab1.changeorg.DTO.ResponseMessageDTO;
 import com.bslp_lab1.changeorg.DTO.TokenObject;
 import com.bslp_lab1.changeorg.DTO.UserDTO;
+import com.bslp_lab1.changeorg.beans.Role;
 import com.bslp_lab1.changeorg.beans.User;
 
 import com.bslp_lab1.changeorg.exceptions.UserNotFoundException;
+import com.bslp_lab1.changeorg.repository.RoleRepository;
 import com.bslp_lab1.changeorg.repository.UserRepository;
 import com.bslp_lab1.changeorg.utils.JWTutils;
 import org.apache.logging.log4j.Level;
@@ -15,12 +17,12 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 
 @Service
 public class UserRepositoryService {
@@ -34,6 +36,8 @@ public class UserRepositoryService {
     private User user;
     @Autowired
     private DTOConverter dtoConverter;
+    @Autowired
+    private RoleRepository roleRepository;
 
     Logger logger = LogManager.getLogger(UserRepositoryService.class);
 
@@ -88,6 +92,7 @@ public class UserRepositoryService {
     }
 
     public void save(User user)  {
+        user.setRoles(Collections.singleton(new Role(1L, "ROLE_ADMIN")));
         this.userRepository.save(user);
     }
 

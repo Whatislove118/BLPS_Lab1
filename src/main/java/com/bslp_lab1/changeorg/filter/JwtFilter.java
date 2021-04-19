@@ -1,5 +1,6 @@
 package com.bslp_lab1.changeorg.filter;
 
+import com.bslp_lab1.changeorg.beans.User;
 import com.bslp_lab1.changeorg.service.ChangeOrgUserDetails;
 import com.bslp_lab1.changeorg.service.ChangeOrgUserDetailsService;
 import com.bslp_lab1.changeorg.utils.JWTutils;
@@ -9,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.*;
@@ -33,14 +35,13 @@ public class JwtFilter implements Filter{
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        logger.log(Level.INFO, "Filter logs: do filter");
         String token = JWTutils.getTokenFromRequest((HttpServletRequest) servletRequest);
         if(token != null && JWTutils.validateToken(token)){
             logger.log(Level.INFO, "Filter logs: token exists");
             String email = JWTutils.getEmailFromToken(token);
             try{
-                ChangeOrgUserDetails changeOrgUserDetails = changeOrgUserDetailsService.loadUserByUsername(email);
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(changeOrgUserDetails, null, null);
+                UserDetails user = changeOrgUserDetailsService.loadUserByUsername(email);
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 logger.log(Level.INFO, "Filter logs: auth completed");
             }catch (NullPointerException e){

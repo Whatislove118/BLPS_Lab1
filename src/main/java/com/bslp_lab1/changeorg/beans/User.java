@@ -5,6 +5,7 @@ package com.bslp_lab1.changeorg.beans;
 import com.sun.istack.NotNull;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "change_org_users", uniqueConstraints =
@@ -24,6 +25,8 @@ public class User {
     private String name;
     @NotNull
     private String surname;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> roles;
 
 
 
@@ -65,5 +68,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }
